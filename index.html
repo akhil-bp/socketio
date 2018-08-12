@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <style>
+        #chat {
+            height: 500px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: darkslategrey;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <p id="demo"></p>
+
+    <div class="w-50 ">
+        <h3 class="text-center">socket chat</h3>
+
+        <p id="chat"></p>
+        <!--CHATS DISPLAY HERE-->
+
+        <form id="send-message">
+            <input autocomplete="off" id="message" />
+            <input type="submit" class="btn-primary" />
+        </form>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <!--localhost:3000/socket.io/socket.io.js-->
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <!-- <script>
+            function myFunction() {
+                
+              console.log($person);
+            }
+        </script> -->
+        <script>
+            //load after all the html documents loaded
+            jQuery(function ($) {
+
+
+                var $person = prompt("Please enter your name", "Harry Potter");
+                var socket = io.connect();//connect java script to index.html
+                var $messageForm = $('#send-message');//FORM DATA   #send-message store to $messageForm
+                var $messageBox = $('#message');//input message
+                var $chat = $('#chat');//display
+
+
+
+
+                $messageForm.submit(function (e) {//form submit event
+                    e.preventDefault();
+                    socket.emit('send message', {msg: $messageBox.val(), name : $person});//sent to server..
+                    //1st parameter....send message....name of event pass to server
+                    //2nd parameter....$messageBox....data we are sending
+                    //$messageBox.val('');
+                    //in the second parameter we can allow send json object ie..{name: "smitha", msg: "hello"}
+                    $messageBox.val('');//after send data we empty the input field
+                });
+
+                //RECEIVE data from the server to client side
+                socket.on('new message', function (data) {//use same name to receive from server
+                    $chat.append(data.name + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : ' + data.msg + "<br/>");//display it
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
